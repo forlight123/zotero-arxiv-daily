@@ -175,6 +175,20 @@ if __name__ == '__main__':
         logger.info(f"Ignoring papers in:\n {args.zotero_ignore}...")
         corpus = filter_corpus(corpus, args.zotero_ignore)
         logger.info(f"Remaining {len(corpus)} papers after filtering.")
+
+    for i, c in enumerate(corpus, 1):
+        data = c.get("data", {})
+        title = data.get("title", "").strip() or "<no title>"
+        item_key = c.get("key", "<no key>")
+        paths = c.get("paths", [])
+
+        logger.info(f"[{i}] {title} (key={item_key})")
+        if paths:
+            for p in paths:
+                logger.info(f"    - {p}")
+        else:
+            logger.info("    - <no collection path> (unfiled)")
+    
     logger.info("Retrieving Arxiv papers...")
     papers = get_arxiv_paper(args.arxiv_query, args.debug)
     if len(papers) == 0:
